@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView maxLabel;
     private TextView avsLabel;
     private TextView tmLabel;
-    private TextView satelitesCount;
+    private TextView satellitesCount;
     private TextView instantSpeedLabel;
 
     private ImageView gpsImage;
@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
         speedImage = findViewById(R.id.imgSpeed);
         speedImage.setVisibility(View.INVISIBLE);
 
-        satelitesCount = findViewById(R.id.satelitesCount);
-        satelitesCount.setTypeface(face);
+        satellitesCount = findViewById(R.id.satelitesCount);
+        satellitesCount.setTypeface(face);
 
         instantSpeedLabel = findViewById(R.id.instantSpeedLabel);
 
@@ -285,11 +285,11 @@ public class MainActivity extends AppCompatActivity {
                 @SuppressLint("SetTextI18n")
                 @Override
                 public void setCount(int count) {
-                    satelitesCount.setText(Integer.toString(count));
+                    satellitesCount.setText(Integer.toString(count));
                 }
             });
         } else {
-            satelitesCount.setVisibility(View.INVISIBLE);
+            satellitesCount.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         boolean success = true;
         for (int grantResult : grantResults) {
             if (grantResult != PackageManager.PERMISSION_GRANTED) {
