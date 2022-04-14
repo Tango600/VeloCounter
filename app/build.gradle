@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+    signingConfigs {
+        config {
+            keyAlias 'key0'
+            keyPassword '012345678'
+            storeFile file('D:/Tango/Projects/VCKey/VeloCounter_key.jks')
+            storePassword '012345678'
+        }
+    }
+    defaultConfig {
+        applicationId "ru.unrealsoftware.velocounter"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 2
+        versionName "1.0.1"
+        buildConfigField "long", "BILDTIME", System.currentTimeMillis() + "L"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        setProperty("archivesBaseName", "VeloCounter_" + versionName)
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}

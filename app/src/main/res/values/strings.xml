@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">VeloCounter</string>
+    <string name="spd">SPD</string>
+    <string name="dst">DST</string>
+    <string name="mxs">MXS</string>
+    <string name="avs">AVS</string>
+    <string name="tm">TM</string>
+</resources>
