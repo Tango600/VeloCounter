@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         firstTick = true;
         startGpsTracker();
 
-        Timer mTimer = new Timer();
+        var mTimer = new Timer();
         MyTimerTask mMyTimerTask = new MyTimerTask();
 
         medianGPSSpeedCounter = new MedianGPSSpeedCounter(4);
@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void calcParameters(double distance, long timeGap) {
 
-        double speed = 0;
+        var speed = 0.0;
         if (!(distance == 0 || timeGap == 0)) {
             speed = (distance / timeGap) * 3600;
         }
