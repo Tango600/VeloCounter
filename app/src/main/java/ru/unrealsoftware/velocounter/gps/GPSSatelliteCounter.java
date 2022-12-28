@@ -1,8 +1,6 @@
 package ru.unrealsoftware.velocounter.gps;
 
 import android.location.GnssStatus;
-import android.location.GpsStatus;
-import android.location.OnNmeaMessageListener;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
