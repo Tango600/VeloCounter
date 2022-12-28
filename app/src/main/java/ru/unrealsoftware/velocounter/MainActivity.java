@@ -2,7 +2,6 @@ package ru.unrealsoftware.velocounter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -31,8 +30,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.unrealsoftware.velocounter.gps.GPSSatelliteCounter;
-import ru.unrealsoftware.velocounter.gps.IGPSSatelliteCounterCallback;
-import ru.unrealsoftware.velocounter.gps.INmeaListenerCallback;
 import ru.unrealsoftware.velocounter.gps.NmeaListener;
 import ru.unrealsoftware.velocounter.speed.MedianGPSSpeedCounter;
 
@@ -124,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         instantSpeedLabel = findViewById(R.id.instantSpeedLabel);
 
-        totalDistance = settings.getFloat("dist",0);
+        totalDistance = settings.getFloat("dist", 0);
 
         setupMode = 0;
         tripTime = 0;
@@ -182,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("DefaultLocale")
     private String formatTimeValue(long millis) {
 
-        String value = "";
+        String value;
         long h = millis / 1000 / 3600;
         long m = (millis - (h * 3600000)) / 60000;
         long s = (millis - (m * 60000) - (h * 3600000)) / 1000;
@@ -271,23 +268,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-            nmeaListener = new NmeaListener(new INmeaListenerCallback() {
-                @Override
-                public void onNmeaMessage(String message, long timestamp) {
+            nmeaListener = new NmeaListener((message, timestamp) -> {
 
-                    if (!TextUtils.isEmpty(message)) {
-                        ///parseNMEA(nmea);
-                    }
+                if (!TextUtils.isEmpty(message)) {
+                    ///parseNMEA(nmea);
                 }
             });
 
-            gpsSatelliteCounter = new GPSSatelliteCounter(new IGPSSatelliteCounterCallback() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void setCount(int count) {
-                    satellitesCount.setText(Integer.toString(count));
-                }
-            });
+            gpsSatelliteCounter = new GPSSatelliteCounter(count -> satellitesCount.setText(Integer.toString(count)));
         } else {
             satellitesCount.setVisibility(View.INVISIBLE);
         }
@@ -331,26 +319,12 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Нет разрешений")
                 .setMessage("Приложению требуется разрешение.")
-                .setPositiveButton("Разрешить", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        requestPermissions();
-                    }
-                })
-                .setNegativeButton("Запретить", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        finish();
-                    }
-                }).show();
+                .setPositiveButton("Разрешить", (dialog, which) -> requestPermissions())
+                .setNegativeButton("Запретить", (dialog, which) -> finish())
+                .setOnCancelListener(dialog -> finish()).show();
     }
 
+    @SuppressLint("SetTextI18n")
     private void resetScreen() {
 
         if (speedLabel != null) {
@@ -468,12 +442,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        /**
-         * @param s
-         * @param i
-         * @param bundle
-         * @deprecated
-         */
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
 
@@ -495,58 +463,54 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
 
-            runOnUiThread(new Runnable() {
+            runOnUiThread(() -> {
 
-                @Override
-                public void run() {
+                if (setupMode != 0) {
 
-                    if (setupMode != 0) {
-
-                        blinkState = !blinkState;
-                        if (dstIsBlinking) {
-                            if (blinkState) {
-                                distanceLabel.setVisibility(View.VISIBLE);
-                            } else {
-                                distanceLabel.setVisibility(View.INVISIBLE);
-                            }
-                        } else {
+                    blinkState = !blinkState;
+                    if (dstIsBlinking) {
+                        if (blinkState) {
                             distanceLabel.setVisibility(View.VISIBLE);
-                        }
-                        if (mxsIsBlinking) {
-                            if (blinkState) {
-                                maxLabel.setVisibility(View.VISIBLE);
-                            } else {
-                                maxLabel.setVisibility(View.INVISIBLE);
-                            }
                         } else {
+                            distanceLabel.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+                        distanceLabel.setVisibility(View.VISIBLE);
+                    }
+                    if (mxsIsBlinking) {
+                        if (blinkState) {
                             maxLabel.setVisibility(View.VISIBLE);
+                        } else {
+                            maxLabel.setVisibility(View.INVISIBLE);
                         }
+                    } else {
+                        maxLabel.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                boolean stateSaveTime = new Date().getTime() - lastSpeed > 10000;
+                if (stateSaveTime) {
+
+                    writeState();
+                }
+
+                boolean hideSpeed = new Date().getTime() - lastSpeed > 3000;
+                if (hideSpeed) {
+
+                    if (speedImage != null) {
+                        speedImage.setVisibility(View.INVISIBLE);
                     }
 
-                    boolean stateSaveTime = new Date().getTime() - lastSpeed > 10000;
-                    if (stateSaveTime) {
-
-                        writeState();
+                    if (speedLabel != null) {
+                        instantSpeedLabel.setText(formatDecimalValue(BigDecimal.valueOf(0), 1));
+                        speedLabel.setText(formatDecimalValue(BigDecimal.valueOf(0), 1));
                     }
+                }
 
-                    boolean hideSpeed = new Date().getTime() - lastSpeed > 3000;
-                    if (hideSpeed) {
-
-                        if (speedImage != null) {
-                            speedImage.setVisibility(View.INVISIBLE);
-                        }
-
-                        if (speedLabel != null) {
-                            instantSpeedLabel.setText(formatDecimalValue(BigDecimal.valueOf(0), 1));
-                            speedLabel.setText(formatDecimalValue(BigDecimal.valueOf(0), 1));
-                        }
-                    }
-
-                    boolean enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                    if (!enabled) {
-                        if (gpsImage != null) {
-                            gpsImage.setVisibility(View.INVISIBLE);
-                        }
+                boolean enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                if (!enabled) {
+                    if (gpsImage != null) {
+                        gpsImage.setVisibility(View.INVISIBLE);
                     }
                 }
             });
