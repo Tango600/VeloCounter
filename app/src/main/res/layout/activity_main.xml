@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/speedShadowLabel"
+        android:id="@+id/speedShadowLabel0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#cccccc"
@@ -29,21 +29,111 @@
         android:textStyle="bold"
         android:layout_marginStart="55dp"
         android:layout_marginTop="30dp"
-        android:visibility="gone"
-        android:text="88.8"
+        android:text="8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/speedLabel"
+        android:id="@+id/speedShadowLabel1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="#cccccc"
+        android:textSize="125sp"
+        android:textStyle="bold"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="30dp"
+        android:text="8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speedShadowLabel2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#cccccc"
+        android:textSize="125sp"
+        android:textStyle="bold"
+        android:layout_marginStart="185dp"
+        android:layout_marginTop="30dp"
+        android:text="8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speedShadowLabelDec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#cccccc"
+        android:textSize="125sp"
+        android:textStyle="bold"
+        android:layout_marginStart="270dp"
+        android:layout_marginTop="30dp"
+        android:text="8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speedLabel0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
         android:textSize="125sp"
         android:textStyle="bold"
         android:layout_marginStart="55dp"
         android:layout_marginTop="30dp"
-        android:text="10.0"
+        android:text="8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speedLabel1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="125sp"
+        android:textStyle="bold"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="30dp"
+        android:text="8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speedLabel2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="125sp"
+        android:textStyle="bold"
+        android:layout_marginStart="185dp"
+        android:layout_marginTop="30dp"
+        android:text="8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speedLabelDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="125sp"
+        android:textStyle="bold"
+        android:layout_marginStart="245dp"
+        android:layout_marginTop="30dp"
+        android:text="."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speedLabelDec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="125sp"
+        android:textStyle="bold"
+        android:layout_marginStart="270dp"
+        android:layout_marginTop="30dp"
+        android:text="8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -201,7 +291,8 @@
         android:layout_marginTop="15dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/satellite_24" />
+        app:srcCompat="@drawable/satellite_24"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/satelitesCount"

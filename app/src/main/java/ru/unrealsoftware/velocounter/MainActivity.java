@@ -39,8 +39,15 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     private TextView sensorTick;
-    private TextView speedLabel;
-    private TextView speedShadowLabel;
+    private TextView speedLabel0;
+    private TextView speedLabel1;
+    private TextView speedLabel2;
+    private TextView speedLabelDec;
+    private TextView speedShadowLabel0;
+    private TextView speedShadowLabel1;
+    private TextView speedShadowLabel2;
+    private TextView speedShadowLabelDec;
+    private TextView dotLabel;
     private TextView distanceLabel;
     private TextView maxLabel;
     private TextView avsLabel;
@@ -77,6 +84,34 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREFS_FILE = "last_state";
     private SharedPreferences settings;
 
+    private void findLabels() {
+
+        dotLabel = findViewById(R.id.speedLabelDot);
+        sensorTick = findViewById(R.id.sensorTick);
+        speedLabel0 = findViewById(R.id.speedLabel0);
+        speedLabel1 = findViewById(R.id.speedLabel1);
+        speedLabel2 = findViewById(R.id.speedLabel2);
+        speedLabelDec = findViewById(R.id.speedLabelDec);
+        speedShadowLabel0 = findViewById(R.id.speedShadowLabel0);
+        speedShadowLabel1 = findViewById(R.id.speedShadowLabel1);
+        speedShadowLabel2 = findViewById(R.id.speedShadowLabel2);
+        speedShadowLabelDec = findViewById(R.id.speedShadowLabelDec);
+        distanceLabel = findViewById(R.id.distanceLabel);
+
+        maxLabel = findViewById(R.id.maxLabel);
+        avsLabel = findViewById(R.id.avsLabel);
+        tmLabel = findViewById(R.id.tmLabel);
+
+        gpsImage = findViewById(R.id.imgGps);
+        gpsImage.setVisibility(View.INVISIBLE);
+
+        speedImage = findViewById(R.id.imgSpeed);
+        speedImage.setVisibility(View.INVISIBLE);
+
+        satellitesCount = findViewById(R.id.satelitesCount);
+        instantSpeedLabel = findViewById(R.id.instantSpeedLabel);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,37 +124,22 @@ public class MainActivity extends AppCompatActivity {
 
         lastTick = new Date().getTime();
 
-        sensorTick = findViewById(R.id.sensorTick);
+        findLabels();
+        dotLabel.setTypeface(face);
         sensorTick.setTypeface(face);
-
-        speedLabel = findViewById(R.id.speedLabel);
-        speedLabel.setTypeface(face);
-
-        speedShadowLabel = findViewById(R.id.speedShadowLabel);
-        speedShadowLabel.setTypeface(face);
-
-        distanceLabel = findViewById(R.id.distanceLabel);
+        speedLabel0.setTypeface(face);
+        speedLabel1.setTypeface(face);
+        speedLabel2.setTypeface(face);
+        speedLabelDec.setTypeface(face);
+        speedShadowLabel0.setTypeface(face);
+        speedShadowLabel1.setTypeface(face);
+        speedShadowLabel2.setTypeface(face);
+        speedShadowLabelDec.setTypeface(face);
         distanceLabel.setTypeface(face);
-
-        maxLabel = findViewById(R.id.maxLabel);
         maxLabel.setTypeface(face);
-
-        avsLabel = findViewById(R.id.avsLabel);
         avsLabel.setTypeface(face);
-
-        tmLabel = findViewById(R.id.tmLabel);
         tmLabel.setTypeface(face);
-
-        gpsImage = findViewById(R.id.imgGps);
-        gpsImage.setVisibility(View.INVISIBLE);
-
-        speedImage = findViewById(R.id.imgSpeed);
-        speedImage.setVisibility(View.INVISIBLE);
-
-        satellitesCount = findViewById(R.id.satelitesCount);
         satellitesCount.setTypeface(face);
-
-        instantSpeedLabel = findViewById(R.id.instantSpeedLabel);
 
         totalDistance = settings.getFloat("dist", 0);
 
@@ -136,16 +156,37 @@ public class MainActivity extends AppCompatActivity {
         mTimer.schedule(mMyTimerTask, 1000, 1000);
     }
 
+    private String getSegmentedSpeed(BigDecimal value) {
+
+        if (value == null || value.compareTo(BigDecimal.ZERO) == 0) {
+
+            return "  00";
+        }
+
+        String r = "";
+        String ss = "";
+        var cc = value.setScale(1, RoundingMode.HALF_DOWN).toString().toCharArray();
+        for (var c : cc) {
+
+            if (c != '.') {
+                ss = ss + c;
+            }
+        }
+        if (ss.length() > 0) {
+
+            if (ss.length() < 4)
+                r = " ".repeat(4 - ss.length());
+            r = r + ss;
+        }
+
+        return r;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
 
-        sensorTick = findViewById(R.id.sensorTick);
-        speedLabel = findViewById(R.id.speedLabel);
-        distanceLabel = findViewById(R.id.distanceLabel);
-        maxLabel = findViewById(R.id.maxLabel);
-        avsLabel = findViewById(R.id.avsLabel);
-        tmLabel = findViewById(R.id.tmLabel);
+        findLabels();
     }
 
     @Override
@@ -327,9 +368,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void resetScreen() {
 
-        if (speedLabel != null) {
-            speedLabel.setText(" 0.0");
-        }
+        displaySpeedToSegment(null);
         if (sensorTick != null) {
             ///sensorTick.setText(Integer.toString(ticksSensor));
         }
@@ -347,6 +386,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void displaySpeedToSegment(String speedStr) {
+
+        if (speedStr == null) speedStr = "  00";
+
+        speedLabel0.setText(Character.toString(speedStr.charAt(0)));
+        speedLabel1.setText(Character.toString(speedStr.charAt(1)));
+        speedLabel2.setText(Character.toString(speedStr.charAt(2)));
+        speedLabelDec.setText(Character.toString(speedStr.charAt(3)));
+    }
+
     @SuppressLint("SetTextI18n")
     private void calcParameters(double distance, long timeGap) {
 
@@ -361,10 +410,11 @@ public class MainActivity extends AppCompatActivity {
             if (speedImage != null) {
                 speedImage.setVisibility(View.VISIBLE);
             }
-            if (speedLabel != null) {
+            if (speedLabel0 != null) {
                 instantSpeedLabel.setText(formatDecimalValue(BigDecimal.valueOf(speed), 1));
                 double spMedian = medianGPSSpeedCounter.getSpeed(speed);
-                speedLabel.setText(formatDecimalValue(BigDecimal.valueOf(spMedian), 1));
+                var speedStr = getSegmentedSpeed(BigDecimal.valueOf(spMedian));
+                displaySpeedToSegment(speedStr);
             }
             if (sensorTick != null) {
                 ///sensorTick.setText(Integer.toString(ticksSensor));
@@ -501,9 +551,9 @@ public class MainActivity extends AppCompatActivity {
                         speedImage.setVisibility(View.INVISIBLE);
                     }
 
-                    if (speedLabel != null) {
+                    if (speedLabel0 != null) {
                         instantSpeedLabel.setText(formatDecimalValue(BigDecimal.valueOf(0), 1));
-                        speedLabel.setText(formatDecimalValue(BigDecimal.valueOf(0), 1));
+                        displaySpeedToSegment("  00");
                     }
                 }
 
