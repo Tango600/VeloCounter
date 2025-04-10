@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 ss = ss + c;
             }
         }
-        if (ss.length() > 0) {
+        if (!ss.isEmpty()) {
 
             if (ss.length() < 4)
                 r = " ".repeat(4 - ss.length());
@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @SuppressLint("DefaultLocale")
     private void startGpsTracker() {
         // Использование GPS
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -404,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
             speed = (distance / timeGap) * 3600;
         }
 
-        if (speed > 1 && speed < 100) {
+        if (speed > 1 && speed < 200) {
 
             lastSpeed = new Date().getTime();
             if (speedImage != null) {
@@ -457,39 +458,37 @@ public class MainActivity extends AppCompatActivity {
     LocationListener locationListener = new LocationListener() {
 
         @Override
-        public void onLocationChanged(Location location) {
+        public void onLocationChanged(@NonNull Location location) {
 
-            if (location != null) {
-                ticksSensor++;
-                lastSensor = new Date().getTime();
-                gpsImage.setVisibility(View.VISIBLE);
+            ticksSensor++;
+            lastSensor = new Date().getTime();
+            gpsImage.setVisibility(View.VISIBLE);
 
-                if (firstTick) {
-                    tripTimeBegin = new Date().getTime();
-                    resetScreen();
-                }
-                if (lastLocation != null) {
-                    double distance = haversine(location.getLatitude(), location.getLongitude(),
-                            lastLocation.getLatitude(), lastLocation.getLongitude());
-
-                    totalDistance += distance;
-
-                    long timeGap = location.getTime() - lastTick;
-
-                    calcParameters(distance, timeGap);
-                }
-
-                if (sensorTick != null) {
-                    sensorTick.setText(Integer.toString(ticksSensor));
-                }
-
-                lastLocation = new Location("last");
-                lastLocation.setLongitude(location.getLongitude());
-                lastLocation.setLatitude(location.getLatitude());
-
-                lastTick = location.getTime();
-                firstTick = false;
+            if (firstTick) {
+                tripTimeBegin = new Date().getTime();
+                resetScreen();
             }
+            if (lastLocation != null) {
+                double distance = haversine(location.getLatitude(), location.getLongitude(),
+                        lastLocation.getLatitude(), lastLocation.getLongitude());
+
+                totalDistance += distance;
+
+                long timeGap = location.getTime() - lastTick;
+
+                calcParameters(distance, timeGap);
+            }
+
+            if (sensorTick != null) {
+                sensorTick.setText(Integer.toString(ticksSensor));
+            }
+
+            lastLocation = new Location("last");
+            lastLocation.setLongitude(location.getLongitude());
+            lastLocation.setLatitude(location.getLatitude());
+
+            lastTick = location.getTime();
+            firstTick = false;
         }
 
         @Override
